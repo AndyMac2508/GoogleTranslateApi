@@ -1,6 +1,10 @@
 {
     "name": "andymac2508/google-translate_api",
     "type": "library",
+     "description": "A package to create a simple google products xml feed",
+        "keywords": ["google translate", "PHP", "PHP library"],
+        "homepage": "https://github.com/AndyMac2508/GoogleTranslateApi/",
+        "license": "LGPL-3.0-only",
     "require": {
         "guzzlehttp/guzzle": "^6.3"
     },
