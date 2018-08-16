@@ -23,10 +23,10 @@ class GoogleTranslator
 
     $result = $this->getResponse($params,$url);
 
-    // get most confident answer
-    var_dump($result->data->detections[0][0]->language); die;
+    
+    $language = $result->data->detections[0][0]->language;
 
-     $confidence = 0.000;
+  
    
 
      return $language;
