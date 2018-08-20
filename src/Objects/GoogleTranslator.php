@@ -9,6 +9,7 @@ class GoogleTranslator
 {
     public $apiKey;
     public $endpoint;
+    public $translateLang;
 
     public function __construct($key)
     {
@@ -16,27 +17,36 @@ class GoogleTranslator
         $this->endpoint = "https://translation.googleapis.com/language/translate/v2";
     }
 
-   public function detectLanguage($text)
-   {
-    $params = ["q" => $text];
-    $url = $this->endpoint."/detect";
-
-    $result = $this->getResponse($params,$url);
-
-    
-    $language = $result->data->detections[0][0]->language;
-
-  
-   
-
-     return $language;
+    public function setTranslateLang($lang)
+    {
+      $this->translateLang = $lang;
     }
 
+    public function detectLanguage($text)
+    {
+      $params = ["q" => $text];
+      $url = $this->endpoint."/detect";
 
+      $result = $this->getResponse($params,$url);
 
+      
+      $language = $result->data->detections[0][0]->language;
+      return $language;
+    }
     public function translate($text)
     {
-      $this->getTranslation($text);
+
+      $sourceLang = $this->detectLanguage($text);
+      $params = ["q" => $text,
+                 "target" => $this->translateLang,
+                 "source" => $sourceLang];
+
+
+      $result = $this->getResponse($params,$this->endpoint);
+
+       $translation = $result->data->translations[0]->translatedText;
+
+       return $translation;
     }
 
     private function getResponse($params,$url)
@@ -48,8 +58,6 @@ class GoogleTranslator
       $client = new Client();
       $args['form_params'] = $allParams;
        
-   
-
       $response = $client->request("POST",$url,$args);
 
       $body = $response->getBody();
