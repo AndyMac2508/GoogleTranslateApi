@@ -3,6 +3,7 @@ namespace AndyMac\GoogleTranslator\Objects;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use Exception;
 
 
 class GoogleTranslator
@@ -37,6 +38,11 @@ class GoogleTranslator
     {
 
       $sourceLang = $this->detectLanguage($text);
+
+      // detected language is the same as the requested translation jsut return the text back
+      if ($this->translateLang == $sourceLang) {
+          return $text;
+      }
       $params = ["q" => $text,
                  "target" => $this->translateLang,
                  "source" => $sourceLang];
