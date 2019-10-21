@@ -42,6 +42,11 @@ class GoogleTranslator
     }
     public function translate($text)
     {
+
+      // if no string just return the string
+      if (empty($text)) {
+        return $text;
+      }
       //If no source lang has been set attempt to detect it 
       if (!$this->sourceLang) {
         $lang =  $this->detectLanguage($text);
