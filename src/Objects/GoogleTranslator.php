@@ -11,6 +11,7 @@ class GoogleTranslator
     public $apiKey;
     public $endpoint;
     public $translateLang;
+    public $sourceLang;
 
     public function __construct($key)
     {
@@ -23,6 +24,11 @@ class GoogleTranslator
       $this->translateLang = $lang;
     }
 
+    public function setSourceLang($lang)
+    {
+      $this->sourceLang = $lang;
+    }
+
     public function detectLanguage($text)
     {
       $params = ["q" => $text];
@@ -30,27 +36,32 @@ class GoogleTranslator
 
       $result = $this->getResponse($params,$url);
 
-      
       $language = $result->data->detections[0][0]->language;
+
       return $language;
     }
     public function translate($text)
     {
-
-      $sourceLang = $this->detectLanguage($text);
+      //If no source lang has been set attempt to detect it 
+      if (!$this->sourceLang) {
+        $lang =  $this->detectLanguage($text);
+        if ($lang === "und") {
+          throw new Exception("Could not determain source language from text");
+        } else {
+          $this->setSourceLang($lang);
+        }
+      }
 
       // detected language is the same as the requested translation jsut return the text back
-      if ($this->translateLang == $sourceLang) {
+      if ($this->translateLang == $this->sourceLang) {
           return $text;
       }
       $params = ["q" => $text,
                  "target" => $this->translateLang,
-                 "source" => $sourceLang];
-
+                 "source" => $this->sourceLang];
 
       $result = $this->getResponse($params,$this->endpoint);
-
-       $translation = $result->data->translations[0]->translatedText;
+      $translation = $result->data->translations[0]->translatedText;
 
        return $translation;
     }
